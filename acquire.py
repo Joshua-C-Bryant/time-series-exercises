@@ -9,7 +9,7 @@ def get_items_data():
     response = requests.get(base_url + '/api/v1/items')
     data = response.json()
     items_df = pd.DataFrame(data['payload']['items'])
-    esponse = requests.get(base_url + data['payload']['next_page'])
+    response = requests.get(base_url + data['payload']['next_page'])
     data = response.json()
     df = pd.concat([items_df, pd.DataFrame(data['payload']['items'])]).reset_index()
     response = requests.get(base_url + data['payload']['next_page'])
@@ -24,9 +24,7 @@ def get_stores_data():
     return stores_df
 
 def get_sales_data():
-    url = 'https://python.zgulde.net/api/v1/sales'
-    response = requests.get(url)
-
+    response = requests.get(base_url + '/api/v1/sales')
     filename = 'sales.csv'
     if os.path.isfile(filename):
         sales = pd.read_csv(filename, index_col=[0])
@@ -56,6 +54,6 @@ def get_store_data():
     items_df = get_items_data()
     stores_df = get_stores_data()
     sales_df = get_sales_data()
-    df = sales_df.set_index('store').join(stores_df.set_index('store_id'))
-    df = df.merge(items_df,how='right',left_on='item',right_on='item_id')
+    sales_plus_stores = pd.merge(sales_df, stores_df, how='left', left_on='store', right_on='store_id')
+    df = pd.merge(sales_plus_stores, items_df, how='left', left_on='item', right_on='item_id')
     return df
