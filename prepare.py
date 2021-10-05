@@ -10,7 +10,7 @@ def prep_store_data(df):
     # convert sales date to datetime
     # df.sale_date = pd.to_datetime(df.sale_date).dt.date
     # df['sale_date']= pd.to_datetime(df['sale_date'])
-    df_store.sale_date = pd.to_datetime(df_store.sale_date.apply(lambda x: x[:-13]))
+    df.sale_date = pd.to_datetime(df.sale_date.apply(lambda x: x[:-13]))
     # create month column
     df['month'] = df.sale_date.dt.month
     # create day of the week column
